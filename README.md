@@ -40,7 +40,7 @@ As an example, considering a default directory structure:
 ```
 -- storage
    `-- app
-       |-- media
+       `-- media
            `-- media_file.jpg
        `-- uploads
            `-- test_upload.jpg
@@ -92,12 +92,6 @@ Because `isPriority` is set for the `high` priority level, resize batches will b
 
 That works great if one page needing image generation is rendered at a time, but if there's a possibility of other pages queuing image resizes concurrently, you may want to set up queueing with priorities as explained in the [queue documentation](http://octobercms.com/docs/services/queues). With our example markup above, assigning each priority level to a different queue via the `queue` setting would allow prioritizing thumbnail generation for a gallery page ahead of the larger images being resized for another gallery page queued earlier.
 
-## License (MIT)
+## License
 
-Copyright 2017 Aspen Digital
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+[MIT License](LICENSE.md)
