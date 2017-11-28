@@ -7,7 +7,6 @@ use AspenDigital\Resizer\Models\ExtendedFile;
 use Config;
 use File as FileHelper;
 use October\Rain\Database\Attach\BrokenImage;
-use October\Rain\Database\Attach\Resizer;
 use Queue;
 use Storage;
 use System\Models\File;
@@ -112,6 +111,7 @@ class ResizeService
         $uploadsPath = Config::get('cms.storage.uploads.path');
         if (substr($fromPath, 0, strlen($uploadsPath)) === $uploadsPath) {
             $type = 'uploads';
+            $fromPath = substr($fromPath, strlen($uploadsPath));
         }
 
         $storageSettings = Config::get("cms.storage.$type");
@@ -141,7 +141,8 @@ class ResizeService
             'isLocal' => $storageSettings['disk'] === 'local',
             'diskFrom' => $diskFromPath,
             'diskTo' => $storageSettings['folder'] . $toPath,
-            'publicTo' => $storageSettings['path'] . $toPath
+            'publicTo' => $storageSettings['path'] . $toPath,
+            'options' => $options
         ];
     }
 
@@ -161,10 +162,10 @@ class ResizeService
 
             try {
                 if ($thumbInfo['isLocal']) {
-                    $this->generateFileThumbLocal($thumbInfo, $width, $height, $options);
+                    $this->generateFileThumbLocal($thumbInfo, $width, $height);
                 }
                 else {
-                    $this->generateFileThumbStorage($thumbInfo, $width, $height, $options);
+                    $this->generateFileThumbStorage($thumbInfo, $width, $height);
                 }
 
             } catch (Exception $e) {
@@ -280,15 +281,14 @@ class ResizeService
      * @param array $thumbInfo
      * @param int $width
      * @param int $height
-     * @param array $options
      */
-    protected function generateFileThumbLocal($thumbInfo, $width, $height, $options)
+    protected function generateFileThumbLocal($thumbInfo, $width, $height)
     {
         $from = $thumbInfo['disk']->getAdapter()->applyPathPrefix($thumbInfo['diskFrom']);
         $to = $thumbInfo['disk']->getAdapter()->applyPathPrefix($thumbInfo['diskTo']);
 
         if (FileHelper::exists($from)) {
-            $this->generateFileThumbBase($from, $to, $width, $height, $options);
+            $this->generateFileThumbBase($from, $to, $width, $height, $thumbInfo['options']);
         }
         else {
             BrokenImage::copyTo($to);
@@ -301,9 +301,8 @@ class ResizeService
      * @param array $thumbInfo
      * @param int $width
      * @param int $height
-     * @param array $options
      */
-    protected function generateFileThumbStorage($thumbInfo, $width, $height, $options)
+    protected function generateFileThumbStorage($thumbInfo, $width, $height)
     {
         $tempPath = temp_path('_resize');
         if (!FileHelper::exists($tempPath)) {
@@ -315,7 +314,7 @@ class ResizeService
 
         if ($thumbInfo['disk']->exists($thumbInfo['diskFrom'])) {
             FileHelper::put($from, $thumbInfo['disk']->get($thumbInfo['diskFrom']));
-            $this->generateFileThumbBase($from, $to, $width, $height, $options);
+            $this->generateFileThumbBase($from, $to, $width, $height, $thumbInfo['options']);
         }
         else {
             BrokenImage::copyTo($to);
@@ -340,7 +339,7 @@ class ResizeService
             FileHelper::makeDirectory($directory, 0777, true);
         }
 
-        Resizer::open($from)
+        ExtendedResizer::open($from)
             ->resize($width, $height, $options)
             ->save($to);
     }

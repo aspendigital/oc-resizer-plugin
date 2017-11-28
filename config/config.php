@@ -34,17 +34,16 @@ return [
     'fanoutSize' => 50,
 
     /**
-     * This setting only matters when queue usage is enabled. On page load, resize jobs
-     * are queued immediately, but to avoid overloading the server, the image request
-     * will wait for this many seconds for the queue processing to generate the
-     * requested thumbnail. After the designated wait, if the thumbnail has still
-     * not been generated, it will be generated will be executed as part
-     * of the image request.
+     * On page load, resize jobs are queued immediately, but to avoid putting too
+     * much load on the server, the image request will wait for this many seconds
+     * for the queue processing to generate the requested thumbnail. After the
+     * designated wait, if the thumbnail has still not been generated, the resize will
+     * be executed as part of the image request.
      *
      * Wherever possible, thumbnails should of course be pre-generated before throwing
      * significant load at a page, but this setting provides a balance between
      * offloading resizing to the queue and avoiding making site visitors wait
-     * too long for image loads if the queue is taking longer than expected.
+     * too long for image loads if the queue processing is taking longer than expected.
      *
      * If not using the queue, images are resized immediately on the request for
      * image load.
