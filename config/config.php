@@ -18,7 +18,7 @@ return [
          * e.g. {{ image || smart_resize(600, 400, 'auto', 'high) }}
          */
         'high' => [
-            'isPriority' => true, // true to send to queue as soon as
+            'isPriority' => true, // true to send to queue as soon as a batch is ready
             'queue'      => null, // The queue name to send jobs to, or null for the default
         ],
         'default' => [
