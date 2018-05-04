@@ -1,2 +1,5 @@
 1.0.0:
     - 'Initial plugin version'
+
+1.0.1:
+    - 'Add global `smartResize` function'

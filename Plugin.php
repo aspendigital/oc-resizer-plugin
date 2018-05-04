@@ -38,6 +38,8 @@ class Plugin extends PluginBase
 
     public function boot()
     {
+        require_once(__DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'global_helper.php');
+
         Route::get('_resize/model/{id}/{width}/{height}/{options?}', function($id, $width, $height, $options=[]) {
             if (is_string($options)) {
                 $options = unserialize(base64_decode($options));

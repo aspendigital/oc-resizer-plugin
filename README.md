@@ -53,6 +53,14 @@ your page could contain the following markup:
 <img src="{{ '/storage/app/uploads/test_upload.jpg' | smart_resize(350, 350, { 'mode': 'crop', 'quality': 95 }) }}">
 ```
 
+### Global function
+
+A global `smartResize` function is defined for use in the back end (or wherever). This function's first parameter is the file attachment object or string path, followed by the same parameters as the Twig filter. Like the filter, it returns the URL to use for loading the resized image.
+
+```
+$resizedUrl = smartResize('/media/file.jpg', 300, 200);
+```
+
 ## Priority levels
 
 By default, this plugin is set up with two priority levels which impact the way resize jobs are queued: `high` and `default`:
