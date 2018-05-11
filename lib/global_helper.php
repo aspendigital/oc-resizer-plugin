@@ -1,6 +1,5 @@
 <?php
 
-use App;
 use AspenDigital\Resizer\Classes\ResizeService;
 
 if (!function_exists('smartResize')) {
