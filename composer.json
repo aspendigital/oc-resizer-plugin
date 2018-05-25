@@ -1,0 +1,8 @@
+{
+    "name": "aspendigital/oc-resizer-plugin",
+    "description": "Smart image resizing and thumbnail generation for OctoberCMS",
+    "type": "october-plugin",
+    "license": "MIT",
+    "homepage": "https://github.com/aspendigital/oc-resizer-plugin",
+    "require": {}
+}
