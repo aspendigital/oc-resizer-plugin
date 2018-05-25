@@ -5,8 +5,9 @@ namespace AspenDigital\Resizer\Jobs;
 use AspenDigital\Resizer\Classes\ResizeService;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Bus\SelfHandling;
 
-class FileResize implements ShouldQueue
+class FileResize implements ShouldQueue, SelfHandling
 {
     use InteractsWithQueue;
 
