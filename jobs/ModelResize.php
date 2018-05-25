@@ -4,9 +4,10 @@ namespace AspenDigital\Resizer\Jobs;
 
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Bus\SelfHandling;
 use System\Models\File;
 
-class ModelResize implements ShouldQueue
+class ModelResize implements ShouldQueue, SelfHandling
 {
     use InteractsWithQueue;
 

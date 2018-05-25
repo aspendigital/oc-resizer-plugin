@@ -5,13 +5,14 @@ namespace AspenDigital\Resizer\Jobs;
 use AspenDigital\Resizer\Models\ExtendedFile;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Bus\SelfHandling;
 use Queue;
 
 /**
  * To keep page loads faster, on render the resizer batches together image resizes,
  * which this job separates and queues individual resize jobs
  */
-class ResizeFanout implements ShouldQueue
+class ResizeFanout implements ShouldQueue, SelfHandling
 {
     use InteractsWithQueue;
 
