@@ -18,12 +18,14 @@ class ExtendedResizer extends \October\Rain\Database\Attach\Resizer
     public function setOptions($options)
     {
         $this->options = array_merge([
-            'mode'      => 'auto',
-            'offset'    => [0, 0],
-            'sharpen'   => 0,
-            'interlace' => false,
-            'upscale'   => false,
-            'quality'   => 90
+            'mode'       => 'auto',
+            'offset'     => [0, 0],
+            'sharpen'    => 0,
+            'interlace'  => false,
+            'upscale'    => false,
+            'flatten'    => false,
+            'background' => [0, 0, 0],
+            'quality'    => 90
         ], $options);
 
         return $this;
@@ -59,10 +61,33 @@ class ExtendedResizer extends \October\Rain\Database\Attach\Resizer
         if ($mode !== 'exact' && !$upscale) {
             list($newWidth, $newHeight) = $this->limitDimensions($newWidth, $newHeight);
         }
-        
-        return parent::resize($newWidth, $newHeight, $options);
+
+        parent::resize($newWidth, $newHeight, $options);
+
+        if ($this->getOption('flatten')) {
+            $this->flattenImage();
+        }
+
+        return $this;
     }
-    
+
+    protected function flattenImage()
+    {
+        $width = imagesx($this->image);
+        $height = imagesy($this->image);
+        $copy = imagecreatetruecolor($width, $height);
+        imagealphablending($copy, true);
+        imagesavealpha($copy, false);
+
+        $background = $this->getOption('background');
+        imagefill($copy, 0, 0, imagecolorallocate($copy, $background[0], $background[1], $background[2]));
+        imagecopy($copy, $this->image, 0, 0, 0, 0, $width, $height);
+
+        imagedestroy($this->image);
+        $this->image = $copy;
+    }
+
+
     /**
      * @param int $newWidth
      * @param int $newHeight

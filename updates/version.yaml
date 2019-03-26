@@ -3,3 +3,6 @@
 
 1.0.1:
     - 'Add global `smartResize` function'
+
+1.0.2:
+    - 'Add ability to flatten transparent images with defined background color'

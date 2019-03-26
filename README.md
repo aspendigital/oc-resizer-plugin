@@ -16,8 +16,16 @@ Parameter    | Description
 ------------ | -------------
 **width**    | integer: desired image width. 0 if height should be used as the sole constraint.
 **height**   | integer: desired image height. 0 if width should be used as the sole constraint.
-**options**  | (optional) string or array: if a string, it is used as the `mode` option. All `getThumb` options are the same. This plugin adds a boolean `upscale` option (default false). `getThumb` will automatically upscale images to match your desired dimensions, but this plugin will only do so if `upscale` is true or "exact" is the `mode`.
+**options**  | (optional) string or array: if a string, it is used as the `mode` option. All `getThumb` options are the same, but this plugin adds some options. See the next table.
 **priority** | (optional) string: the priority level to use for queuing (more below). By default takes the `defaultPriority` value set in the plugin config.
+
+Added options:
+
+Option         | Default | Description
+-------------- | ------- | ------------
+**upscale**    | false   | `getThumb` will automatically upscale images to match your desired dimensions, but this plugin will only do so if `upscale` is true or "exact" is the `mode`.
+**flatten**    | false   | Set to true to flatten transparent images using the `background` option.
+**background** | [0,0,0] | Array of RGB values specifying a background color to use when flattening an image. Has no effect if `flatten` is false.
 
 ### File attachment `getThumb` replacement
 

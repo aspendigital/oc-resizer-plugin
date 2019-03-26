@@ -42,8 +42,11 @@ class ExtendedFile extends File
      */
     protected function getThumbFilename($width, $height, $options)
     {
-        // Include upscale setting
-        return str_replace(".$options[extension]", '_'. (empty($options['upscale']) ? 'no_up' : 'up') . ".$options[extension]", parent::getThumbFilename($width, $height, $options));
+        // Include upscale, flatten, and background options
+        $background = array_get($options, 'background');
+        return str_replace(".$options[extension]", '_'.(empty($options['upscale']) ? 'no_up' : 'up').
+                (empty($options['flatten']) || empty($background) ? '' : '_flat_'.sprintf("%02x%02x%02x", $background[0], $background[1], $background[2])).
+                ".$options[extension]", parent::getThumbFilename($width, $height, $options));
     }
     
     
