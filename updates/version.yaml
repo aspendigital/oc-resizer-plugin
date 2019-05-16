@@ -6,3 +6,6 @@
 
 1.0.2:
     - 'Add ability to flatten transparent images with defined background color'
+
+1.0.3:
+    - 'Fix path issue bugs with direct file references'

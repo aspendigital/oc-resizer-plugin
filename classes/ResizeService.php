@@ -130,18 +130,16 @@ class ResizeService
         $hashData[] = $disk->exists($diskFromPath) ? $disk->lastModified($diskFromPath) : 0;
         $hash = md5(serialize($hashData));
 
-        $toFileName = substr($fileName, 0, -(strlen($options['extension'])+1)) . "-$hash.$options[extension]";
+        $toFileName = pathinfo($fileName, PATHINFO_FILENAME) . "-$hash.$options[extension]";
         $partition = substr($hash, 0, 3);
-
-        $toPath = "/$this->thumbDirName/$partition/$toFileName";
 
         return [
             'type' => $type,
             'disk' => $disk,
             'isLocal' => $storageSettings['disk'] === 'local',
             'diskFrom' => $diskFromPath,
-            'diskTo' => $storageSettings['folder'] . $toPath,
-            'publicTo' => $storageSettings['path'] . $toPath,
+            'diskTo' => $storageSettings['folder'] . "/$this->thumbDirName/$partition/$toFileName",
+            'publicTo' => $storageSettings['path'] . '/' . join('/', array_map('rawurlencode', [$this->thumbDirName, $partition, $toFileName])),
             'options' => $options
         ];
     }
