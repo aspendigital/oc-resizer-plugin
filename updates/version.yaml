@@ -8,4 +8,7 @@
     - 'Add ability to flatten transparent images with defined background color'
 
 1.0.3:
-    - 'Fix path issue bugs with direct file references'
+    - 'Fix path bugs with direct file references'
+
+1.1.0:
+    - '!!! Update function signature to match change introduced in OctoberCMS build 457'

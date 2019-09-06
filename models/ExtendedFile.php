@@ -36,11 +36,11 @@ class ExtendedFile extends File
     {
         return $this->getDefaultThumbOptions($options);
     }
-    
+
     /**
      * @see parent::getThumbFilename()
      */
-    protected function getThumbFilename($width, $height, $options)
+    public function getThumbFilename($width, $height, $options)
     {
         // Include upscale, flatten, and background options
         $background = array_get($options, 'background');
@@ -48,14 +48,14 @@ class ExtendedFile extends File
                 (empty($options['flatten']) || empty($background) ? '' : '_flat_'.sprintf("%02x%02x%02x", $background[0], $background[1], $background[2])).
                 ".$options[extension]", parent::getThumbFilename($width, $height, $options));
     }
-    
-    
+
+
     /*******************************************************************
      * The below functions are copied directly from parent, but with a *
      * different reference to the Resizer class.                       *
      *******************************************************************/
-    
-    
+
+
     /**
      * @inheritdoc
      */
