@@ -8,7 +8,8 @@ return [
     'useQueue' => null,
 
     // The name of the directory created for thumbnails in 'media' and 'uploads' paths
-    'thumbDirName' => '_resized',
+    // Names starting with a dot are ignored by default in the media library
+    'thumbDirName' => '.resized',
 
     'defaultPriority' => 'default',
 

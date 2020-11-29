@@ -12,3 +12,6 @@
 
 1.1.0:
     - '!!! Update function signature to match change introduced in OctoberCMS build 457'
+
+1.2.0:
+    - '!!! Change default folder name for resized images to `.resized`, which is ignored by default in media library'
