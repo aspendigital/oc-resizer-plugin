@@ -62,7 +62,7 @@ class Plugin extends PluginBase
         });
 
         Route::get('_resize/file/{path}/{width}/{height}/{options?}', function($path, $width, $height, $options=[]) {
-            $path = base64_decode($path);
+            $path = urldecode($path);
             if ($options) {
                 $options = unserialize(base64_decode($options));
             }
