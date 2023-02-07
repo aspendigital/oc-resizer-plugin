@@ -15,3 +15,6 @@
 
 1.2.0:
     - '!!! Change default folder name for resized images to `.resized`, which is ignored by default in media library'
+
+2.0.0:
+    - '!!! October CMS v3 compatibility. Update path and class references.'

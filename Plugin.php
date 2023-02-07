@@ -16,8 +16,8 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name'          => 'Resizer',
-            'description'   => '',
+            'name'          => 'Smart Resizer',
+            'description'   => 'Offloads thumbnail generation and image resizing to queue or image load',
             'author'        => 'Aspen Digital',
             'icon'          => 'icon-image',
             'homepage'      => 'http://www.aspendigital.com'

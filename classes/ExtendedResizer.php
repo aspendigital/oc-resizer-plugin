@@ -5,17 +5,17 @@ namespace AspenDigital\Resizer\Classes;
 /**
  * Add "upscale" option (default false) to base resizer
  */
-class ExtendedResizer extends \October\Rain\Database\Attach\Resizer
+class ExtendedResizer extends \October\Rain\Resize\Resizer
 {
     /**
      * @inheritdoc
      */
-    public static function open($file)
+    public static function open($file): ExtendedResizer
     {
         return new static($file);
     }
     
-    public function setOptions($options)
+    public function setOptions($options): ExtendedResizer
     {
         $this->options = array_merge([
             'mode'       => 'auto',
@@ -34,7 +34,7 @@ class ExtendedResizer extends \October\Rain\Database\Attach\Resizer
     /**
      * @inheritdoc
      */
-    public function resize($newWidth, $newHeight, $options = [])
+    public function resize($newWidth, $newHeight, $options = []): ExtendedResizer
     {
         $this->setOptions($options);
         

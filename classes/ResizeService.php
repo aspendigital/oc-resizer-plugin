@@ -6,7 +6,7 @@ use AspenDigital\Resizer\Jobs\ResizeFanout;
 use AspenDigital\Resizer\Models\ExtendedFile;
 use Config;
 use File as FileHelper;
-use October\Rain\Database\Attach\BrokenImage;
+use October\Rain\Resize\BrokenImage;
 use Queue;
 use Storage;
 use System\Models\File;
@@ -108,21 +108,22 @@ class ResizeService
     public function fileThumbInfo($fromPath, $width, $height, $options)
     {
         $type = 'media';
-        $uploadsPath = Config::get('cms.storage.uploads.path');
+        $uploadsPath = Config::get('filesystems.disks.uploads.url');
         if (substr($fromPath, 0, strlen($uploadsPath)) === $uploadsPath) {
             $type = 'uploads';
             $fromPath = substr($fromPath, strlen($uploadsPath));
         }
 
-        $storageSettings = Config::get("cms.storage.$type");
+        $storageSettings = Config::get("filesystems.disks.$type");
 
         // Use same options as used for file attachments
         $fileName = basename($fromPath);
         $extendedFile = new ExtendedFile(['file_name'=>$fileName]);
         $options = $extendedFile->resizerGetDefaultThumbOptions($options);
 
-        $disk = Storage::disk($storageSettings['disk']);
-        $diskFromPath = $storageSettings['folder'] . $fromPath;
+        $disk = Storage::disk($storageSettings['driver']);
+        $folder = basename($storageSettings['url']);
+        $diskFromPath = $folder . $fromPath;
 
         $hashData = $options;
         $hashData[] = (int) $width;
@@ -136,10 +137,10 @@ class ResizeService
         return [
             'type' => $type,
             'disk' => $disk,
-            'isLocal' => $storageSettings['disk'] === 'local',
+            'isLocal' => $storageSettings['driver'] === 'local',
             'diskFrom' => $diskFromPath,
-            'diskTo' => $storageSettings['folder'] . "/$this->thumbDirName/$partition/$toFileName",
-            'publicTo' => $storageSettings['path'] . '/' . join('/', array_map('rawurlencode', [$this->thumbDirName, $partition, $toFileName])),
+            'diskTo' => $folder . "/$this->thumbDirName/$partition/$toFileName",
+            'publicTo' => $storageSettings['url'] . '/' . join('/', array_map('rawurlencode', [$this->thumbDirName, $partition, $toFileName])),
             'options' => $options
         ];
     }
@@ -282,8 +283,8 @@ class ResizeService
      */
     protected function generateFileThumbLocal($thumbInfo, $width, $height)
     {
-        $from = $thumbInfo['disk']->getAdapter()->applyPathPrefix($thumbInfo['diskFrom']);
-        $to = $thumbInfo['disk']->getAdapter()->applyPathPrefix($thumbInfo['diskTo']);
+        $from = $thumbInfo['disk']->path($thumbInfo['diskFrom']);
+        $to = $thumbInfo['disk']->path($thumbInfo['diskTo']);
 
         if (FileHelper::exists($from)) {
             $this->generateFileThumbBase($from, $to, $width, $height, $thumbInfo['options']);
