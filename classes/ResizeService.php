@@ -108,13 +108,13 @@ class ResizeService
     public function fileThumbInfo($fromPath, $width, $height, $options)
     {
         $type = 'media';
-        $uploadsPath = Config::get('cms.storage.uploads.path');
-        if (substr($fromPath, 0, strlen($uploadsPath)) === $uploadsPath) {
+        $uploadsPath = Config::get('cms.storage.uploads.path', Config::get('filesystems.disks.uploads.url'));
+        if ($uploadsPath && substr($fromPath, 0, strlen($uploadsPath)) === $uploadsPath) {
             $type = 'uploads';
             $fromPath = substr($fromPath, strlen($uploadsPath));
         }
 
-        $storageSettings = Config::get("cms.storage.$type");
+        $storageSettings = $this->getStorageSettings($type);
 
         // Use same options as used for file attachments
         $fileName = basename($fromPath);
@@ -122,7 +122,8 @@ class ResizeService
         $options = $extendedFile->resizerGetDefaultThumbOptions($options);
 
         $disk = Storage::disk($storageSettings['disk']);
-        $diskFromPath = $storageSettings['folder'] . $fromPath;
+        $folder = trim($storageSettings['folder'], '/');
+        $diskFromPath = ($folder ? $folder . '/' : '') . ltrim($fromPath, '/');
 
         $hashData = $options;
         $hashData[] = (int) $width;
@@ -138,9 +139,24 @@ class ResizeService
             'disk' => $disk,
             'isLocal' => $storageSettings['disk'] === 'local',
             'diskFrom' => $diskFromPath,
-            'diskTo' => $storageSettings['folder'] . "/$this->thumbDirName/$partition/$toFileName",
-            'publicTo' => $storageSettings['path'] . '/' . join('/', array_map('rawurlencode', [$this->thumbDirName, $partition, $toFileName])),
+            'diskTo' => ($folder ? $folder . '/' : '') . "$this->thumbDirName/$partition/$toFileName",
+            'publicTo' => rtrim($storageSettings['path'], '/') . '/' . join('/', array_map('rawurlencode', [$this->thumbDirName, $partition, $toFileName])),
             'options' => $options
+        ];
+    }
+
+    protected function getStorageSettings($type)
+    {
+        if ($storageSettings = Config::get("cms.storage.$type")) {
+            return $storageSettings;
+        }
+
+        $diskConfig = Config::get("filesystems.disks.$type", []);
+
+        return [
+            'disk' => $type,
+            'folder' => '',
+            'path' => array_get($diskConfig, 'url', "/storage/app/$type"),
         ];
     }
 
