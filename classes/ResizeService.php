@@ -6,7 +6,6 @@ use AspenDigital\Resizer\Jobs\ResizeFanout;
 use AspenDigital\Resizer\Models\ExtendedFile;
 use Config;
 use File as FileHelper;
-use October\Rain\Database\Attach\BrokenImage;
 use Queue;
 use Storage;
 use System\Models\File;
@@ -298,14 +297,14 @@ class ResizeService
      */
     protected function generateFileThumbLocal($thumbInfo, $width, $height)
     {
-        $from = $thumbInfo['disk']->getAdapter()->applyPathPrefix($thumbInfo['diskFrom']);
-        $to = $thumbInfo['disk']->getAdapter()->applyPathPrefix($thumbInfo['diskTo']);
+        $from = $thumbInfo['disk']->path($thumbInfo['diskFrom']);
+        $to = $thumbInfo['disk']->path($thumbInfo['diskTo']);
 
         if (FileHelper::exists($from)) {
             $this->generateFileThumbBase($from, $to, $width, $height, $thumbInfo['options']);
         }
         else {
-            BrokenImage::copyTo($to);
+            $this->copyBrokenImage($to);
         }
 
         FileHelper::chmod($to);
@@ -331,7 +330,7 @@ class ResizeService
             $this->generateFileThumbBase($from, $to, $width, $height, $thumbInfo['options']);
         }
         else {
-            BrokenImage::copyTo($to);
+            $this->copyBrokenImage($to);
         }
 
         $thumbInfo['disk']->put($thumbInfo['diskTo'], FileHelper::get($to));
@@ -356,6 +355,36 @@ class ResizeService
         ExtendedResizer::open($from)
             ->resize($width, $height, $options)
             ->save($to);
+    }
+
+    protected function copyBrokenImage($to)
+    {
+        $directory = dirname($to);
+        if (!FileHelper::exists($directory)) {
+            FileHelper::makeDirectory($directory, 0777, true);
+        }
+
+        $image = imagecreatetruecolor(1, 1);
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
+        imagefill($image, 0, 0, imagecolorallocatealpha($image, 255, 255, 255, 127));
+
+        switch (strtolower(pathinfo($to, PATHINFO_EXTENSION))) {
+            case 'jpg':
+            case 'jpeg':
+                imagejpeg($image, $to, 90);
+                break;
+            case 'webp':
+                imagewebp($image, $to, 90);
+                break;
+            case 'gif':
+                imagegif($image, $to);
+                break;
+            default:
+                imagepng($image, $to);
+        }
+
+        imagedestroy($image);
     }
 
     /**

@@ -5,17 +5,17 @@ namespace AspenDigital\Resizer\Classes;
 /**
  * Add "upscale" option (default false) to base resizer
  */
-class ExtendedResizer extends \October\Rain\Database\Attach\Resizer
+class ExtendedResizer extends \October\Rain\Resize\Resizer
 {
     /**
      * @inheritdoc
      */
-    public static function open($file)
+    public static function open($file): static
     {
         return new static($file);
     }
     
-    public function setOptions($options)
+    public function setOptions(array $options): static
     {
         $this->options = array_merge([
             'mode'       => 'auto',
@@ -34,7 +34,7 @@ class ExtendedResizer extends \October\Rain\Database\Attach\Resizer
     /**
      * @inheritdoc
      */
-    public function resize($newWidth, $newHeight, $options = [])
+    public function resize($newWidth, $newHeight, $options = []): static
     {
         $this->setOptions($options);
         
@@ -49,10 +49,10 @@ class ExtendedResizer extends \October\Rain\Database\Attach\Resizer
             $newHeight = $this->height;
         }
         elseif (!$newWidth) {
-            $newWidth = $this->getSizeByFixedHeight($newHeight);
+            $newWidth = (int) round($newHeight * ($this->width / $this->height));
         }
         elseif (!$newHeight) {
-            $newHeight = $this->getSizeByFixedWidth($newWidth);
+            $newHeight = (int) round($newWidth * ($this->height / $this->width));
         }
         
         // If not upscaling, constrain dimensions
@@ -73,18 +73,9 @@ class ExtendedResizer extends \October\Rain\Database\Attach\Resizer
 
     protected function flattenImage()
     {
-        $width = imagesx($this->image);
-        $height = imagesy($this->image);
-        $copy = imagecreatetruecolor($width, $height);
-        imagealphablending($copy, true);
-        imagesavealpha($copy, false);
-
         $background = $this->getOption('background');
-        imagefill($copy, 0, 0, imagecolorallocate($copy, $background[0], $background[1], $background[2]));
-        imagecopy($copy, $this->image, 0, 0, 0, 0, $width, $height);
 
-        imagedestroy($this->image);
-        $this->image = $copy;
+        $this->image->blendTransparency($background);
     }
 
 
