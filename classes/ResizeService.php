@@ -6,10 +6,10 @@ use AspenDigital\Resizer\Jobs\ResizeFanout;
 use AspenDigital\Resizer\Models\ExtendedFile;
 use Config;
 use File as FileHelper;
+use Illuminate\Support\Facades\URL;
 use Queue;
 use Storage;
 use System\Models\File;
-use URL;
 
 class ResizeService
 {
