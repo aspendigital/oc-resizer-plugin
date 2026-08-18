@@ -229,7 +229,7 @@ class ResizeService
             $this->queue($priority, ['type'=>'model', 'id'=>$file->id, 'width'=>$width, 'height'=>$height, 'options'=>$options]);
         }
 
-        return URL::to('/_resize/model', [$image->id, $width, $height, base64_encode(serialize($options))]);
+        return URL::to('/_resize/model', [$image->id, $width, $height, base64_encode(json_encode($options))]);
     }
 
     /**
@@ -273,7 +273,7 @@ class ResizeService
             $this->queue($priority, ['type'=>'file', 'path'=>$fromPath, 'width'=>$width, 'height'=>$height, 'options'=>$options]);
         }
 
-        return URL::to('/_resize/file', [base64_encode($fromPath), $width, $height, base64_encode(serialize($options))]);
+        return URL::to('/_resize/file', [base64_encode($fromPath), $width, $height, base64_encode(json_encode($options))]);
     }
 
     /**
